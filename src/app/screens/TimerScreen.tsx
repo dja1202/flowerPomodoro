@@ -7,15 +7,13 @@ import { FLOWERS, FlowerType, CompletedSession } from '../types';
 import { Pause, Play } from 'lucide-react';
 
 const STORAGE_KEY = 'pomodoro-garden-sessions';
-const COUNTDOWN_DURATION = 5;
 
-type TimerPhase = 'countdown' | 'growing' | 'completed';
+type TimerPhase = 'growing' | 'completed';
 
 export function TimerScreen() {
   const navigate = useNavigate();
   const { flowerType } = useParams<{ flowerType: string }>();
-  const [phase, setPhase] = useState<TimerPhase>('countdown');
-  const [countdownLeft, setCountdownLeft] = useState(COUNTDOWN_DURATION);
+  const [phase, setPhase] = useState<TimerPhase>('growing');
   const [timeLeft, setTimeLeft] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -33,29 +31,6 @@ export function TimerScreen() {
     setTimeLeft(seconds);
     setTotalTime(seconds);
   }, [flower, navigate]);
-
-  // Countdown phase (5 -> 4 -> 3 -> 2 -> 1)
-  useEffect(() => {
-    if (phase === 'countdown') {
-      if (countdownLeft > 0) {
-        intervalRef.current = window.setTimeout(() => {
-          setCountdownLeft((prev) => {
-            if (prev <= 1) {
-              setPhase('growing');
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
-      }
-    };
-  }, [phase, countdownLeft]);
 
   // Growing phase (timer)
   useEffect(() => {
@@ -153,57 +128,6 @@ export function TimerScreen() {
 
       <div className="relative z-10 flex flex-col items-center justify-center gap-12 px-6 w-full">
         <AnimatePresence mode="wait">
-          {/* Countdown Phase (5 -> 4 -> 3 -> 2 -> 1) */}
-          {phase === 'countdown' && (
-            <motion.div
-              key="countdown"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="text-center space-y-8"
-            >
-              <h2 className="text-3xl font-semibold text-gray-700">Get Ready to Focus...</h2>
-              
-              <motion.div
-                key={countdownLeft}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 1.5, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-9xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
-              >
-                {countdownLeft}
-              </motion.div>
-
-              {/* Falling seed animation */}
-              <div className="relative h-64 overflow-hidden">
-                <motion.div
-                  className="text-6xl absolute left-1/2 -translate-x-1/2"
-                  initial={{ y: -100, opacity: 0, rotate: 0 }}
-                  animate={{
-                    y: 220,
-                    opacity: [0, 1, 1, 1],
-                    rotate: [0, 180, 360, 540, 720],
-                  }}
-                  transition={{
-                    duration: COUNTDOWN_DURATION,
-                    ease: 'easeIn',
-                  }}
-                >
-                  🌱
-                </motion.div>
-                
-                {/* Ground line */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  className="absolute bottom-8 left-0 right-0 h-1 bg-amber-800/40 rounded-full"
-                />
-              </div>
-            </motion.div>
-          )}
-
           {/* Growing Phase (Timer + Flower Growth) */}
           {phase === 'growing' && (
             <motion.div
@@ -355,6 +279,9 @@ export function TimerScreen() {
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeDasharray={`${2 * Math.PI * 45}`}
+                    initial={{
+                      strokeDashoffset: 2 * Math.PI * 45,
+                    }}
                     animate={{
                       strokeDashoffset: 2 * Math.PI * 45 * (1 - progress / 100),
                     }}
