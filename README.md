@@ -74,23 +74,6 @@ This will create platform-specific installers in the `release` folder:
 - **Windows**: .exe (NSIS installer) and portable .exe
 - **Linux**: .AppImage and .deb
 
-## Project Structure
-
-```
-├── electron/
-│   ├── main.cjs          # Electron main process
-│   └── preload.cjs       # Preload script for security
-├── src/
-│   ├── app/
-│   │   ├── components/   # React components
-│   │   ├── screens/      # Screen components
-│   │   ├── routes.ts     # React Router configuration
-│   │   └── types.ts      # TypeScript types
-│   └── styles/           # CSS and Tailwind files
-├── package.json
-└── vite.config.ts
-```
-
 ## Available Scripts
 
 - `npm run dev` - Start Vite dev server only
@@ -100,15 +83,6 @@ This will create platform-specific installers in the `release` folder:
 - `npm run electron:build` - Build and package Electron app
 - `npm run package` - Package app without creating installer
 - `npm run dist` - Create distributable installers
-
-## How to Use
-
-1. **Choose a Flower**: Select from 5 flower types, each with different focus durations
-2. **Grow**: Click the "Grow" button to start your focus session
-3. **Focus**: Watch your flower grow through 5 stages as the timer counts down
-4. **Pause/Resume**: Use the pause button if you need a break
-5. **Garden**: View all your completed focus sessions in your personal garden
-6. **Repeat**: Grow more flowers to build your collection!
 
 ## Customization
 
